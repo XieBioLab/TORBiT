@@ -188,10 +188,3 @@ def create_error_record(record, v, j, chain_type, msg=''):
         'error_message': msg
     }
 
-# if __name__ == "__main__":
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument("-b", required=True, help="Input AIRR TSV file")
-#     parser.add_argument("-c", required=True, help="Output CSV file")
-#     parser.add_argument("-e", required=True, help="Error records file")
-#     args = parser.parse_args()
-#     process_file(args.b, args.c, args.e)

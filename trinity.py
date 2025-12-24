@@ -395,12 +395,3 @@ def parallel_batch(r1_file, threads, output_dir, r2_file=None, has_barcode_umi=b
     rename_contig_ids(output_fa)
     logging.info(f"Assembly completed for {mode} data.")
 
-def main():
-    r1_file = '/data/zhanqh/tribit/test/clustered1.fastq'
-    r2_file = '/data/zhanqh/tribit/test/clustered2.fastq'
-    output_dir = '/data/zhanqh/tribit/test/'
-    threads = 16
-    parallel_batch(r1_file, threads, output_dir, r2_file, has_barcode_umi= True)
-
-if __name__ == "__main__":
-    main()

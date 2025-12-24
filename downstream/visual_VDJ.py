@@ -195,14 +195,3 @@ def solo_gene_plot(input_excel, output_plot_prefix):
 
     print(f"Figures were saved with prefix: {output_plot_prefix}")
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate VDJ Gene Usage Statistics and Visualization")
-    parser.add_argument("-csv", required=True, help="Path to input CSV file")
-    parser.add_argument("-xls", required=True, help="Path to output Excel file")
-    parser.add_argument("-plot", required=True, help="Path to output plot file")
-
-    args = parser.parse_args()
-
-    count_gene_usage(args.csv, args.xls)
-    all_genes_plot(args.xls, args.plot)
-    solo_gene_plot(args.xls, args.plot)

@@ -212,33 +212,3 @@ def write_clustered_fq(clustered, output_fq1, output_fq2=None):
                     for seq, qual in seq_qual_list:
                         fq1_out.write(f"{new_id}\n{seq}\n+\n{qual}\n")
 
-# def main():
-#     input_dir = "/data/zhanqh/soloseq_test"
-#     fq1_file = os.path.join(input_dir, "soloseq_nn_f1.fastq")
-#     fq2_file = os.path.join(input_dir, "soloseq_nn_r2.fastq")
-
-#     output_fq1 = os.path.join(input_dir, "zclustered1.fastq")
-#     output_fq2 = os.path.join(input_dir, "zclustered2.fastq")
-
-#     barcode_len = 16
-#     #umi_len = 12  # 或设置为实际的UMI长度，例如 12
-
-#     print("Parsing FASTQ files...")
-#     if fq2_file:
-#         f, r = parse_fq(fq1_file, barcode_len, umi_len, fq2_file)
-#     else:
-#         f = parse_fq(fq1_file, barcode_len, umi_len)
-
-#     print("Clustering by barcode and UMI...")
-#     clustered = cluster_by_barcode_umi(f, r, umi_len)
-
-#     print("Writing clustered FASTQ files...")
-#     write_clustered_fq(clustered, output_fq1, output_fq2)
-
-#     print("Processing completed. Output files saved to:")
-#     print(f"- Forward reads: {output_fq1}")
-#     if fq2_file:
-#         print(f"- Reverse reads: {output_fq2}")
-
-# if __name__ == "__main__":
-#     main()

@@ -64,7 +64,4 @@ def analyze_tcr_usage_to_excel(csv_file, output_excel):
     wb.save(output_excel)
     print(f"统计结果已保存到 {output_excel}")
 
-if __name__ == "__main__":
-    csv_file = "/data/zhanqh/sampleTCR/P01/P01-T-I/output.csv"  # 替换为你的 CSV 文件路径
-    output_excel = "/data/zhanqh/sampleTCR/P01/P01-T-I/tcr_usage_analysis.xlsx"  # 输出 Excel 文件路径
-    analyze_tcr_usage_to_excel(csv_file, output_excel)
+

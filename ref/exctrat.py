@@ -16,8 +16,8 @@ def extract_tcr_genes(input_fa, output_fa, keywords):
 
 # 用法示例
 if __name__ == "__main__":
-    input_fa = "/data/zhanqh/py_pre-test/ref_all/hg38_tcr.fa"          # 输入文件路径
-    output_fa = "/data/zhanqh/py_pre-test/ref_all/hg38n_tcr.fa"    # 输出文件路径
+    input_fa = "./ref_all/hg38_tcr.fa"          # 输入文件路径
+    output_fa = "./ref_all/hg38n_tcr.fa"    # 输出文件路径
     keywords = [
         "TRAV", "TRBV", "TRDV", "TRGV",  # TCR V 基因
         "TRAJ", "TRBJ", "TRDJ", "TRGJ",  # TCR J 基因

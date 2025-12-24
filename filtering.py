@@ -41,9 +41,4 @@ def filter_bwa_sam(input_sam, output_fq1, output_fq2=None):
         return None, None if output_fq2 else None
     
 
-# def main():
-#     filter_bwa_sam(input_sam="/data/zhanqh/soloseq_test/trinity/sample_Aligned.out.sam", 
-#                    output_fq1="/data/zhanqh/soloseq_test/trinity/sample1.fastq",
-#                    output_fq2="/data/zhanqh/soloseq_test/trinity/sample2.fastq")
-# if __name__ == "__main__":
-#     main()
+

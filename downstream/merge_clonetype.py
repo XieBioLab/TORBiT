@@ -3,14 +3,12 @@ import csv
 
 # 定义四个输入文件夹路径和输出文件路径
 input_folders = [
-    '/data/zhanqh/new_sampleTCR/P03/P03-T-I',
-    '/data/zhanqh/new_sampleTCR/P04/P04-T-I',
-    '/data/zhanqh/new_sampleTCR/P05/P05-T-I',
-    '/data/zhanqh/new_sampleTCR/P06/P06-T-I',
-    #'/data/zhanqh/data_all/GSA/HRA005546/HRR13731/HRR1373107/tribit',
-    #'/data/zhanqh/data_all/GSA/HRA005546/HRR13731/HRR1373108/tribit'
+    './P03/P03-T-I',
+    './P04/P04-T-I',
+    './P05/P05-T-I',
+    './P06/P06-T-I',
 ]
-output_file = '/data/zhanqh/new_sampleTCR/MSI/T/fil_clone_celltype-I.tsv'
+output_file = './T/fil_clone_celltype-I.tsv'
 
 # 获取所有指定文件名路径
 target_files = []

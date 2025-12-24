@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 def annotation(ref, input, output, threads = int):
-    dir = "/data/zhanqh/miniforge3/envs/torbit/bin/"
+    dir = "./miniforge3/envs/torbit/bin/"
     # Prepare path
     annot = os.path.join(output, "annot.txt")
     cdr3 = os.path.join(output, "_cdr3.out")

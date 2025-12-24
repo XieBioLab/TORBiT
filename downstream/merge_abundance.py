@@ -88,15 +88,3 @@ def merge_tcr_timepoints(patient_id, input_dir, output_file):
     
     return result
 
-# 使用示例
-if __name__ == "__main__":
-    # 修改为你的实际路径
-    merged_data = merge_tcr_timepoints(
-        patient_id="P01",
-        input_dir="/data/zhanqh/sampleTCR",
-        output_file="/data/zhanqh/sampleTCR/P01/merged_tcr_clonotypes_pivoted.csv"
-    )
-    
-    # 打印结果示例（不依赖tabulate）
-    print("\n合并后的数据前5行:")
-    print(merged_data.head())

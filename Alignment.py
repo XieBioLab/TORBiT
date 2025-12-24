@@ -72,22 +72,3 @@ def run_bwa(index_prefix, fq1_file, fq2_file=None, output_sam="output.sam", thre
         print(f"Alignment failed: {e}")
         return None
     
-# def main():
-#     # 输入文件路径
-#     ref_file = "/data/zhanqh/tribit/ttttttttt/hg38_tcr.fa"
-#     fq1_file = "/data/zhanqh/soloseq_test/soloseq_nn_sinlge_f1.fastq"
-#     fq2_file = "/data/zhanqh/soloseq_test/soloseq_nn_sinlge_r2.fastq"
-#     index_dir = "/data/zhanqh/tribit/ttttttttt"
-#     output_sam = "/export4/xielu_group/data175/zhanqh/issues_within_group/zqh_data/HRA005546/HRR13731/HRR1373105/out.sam"
-
-#     success, index_prefix = GBI(ref_file, index_dir)  # 解包返回值
-#     if not success:
-#         print("索引生成失败，程序退出。")
-#         return
-#     GBI(ref_file, index_dir)
-#     # 运行 BWA-MEM 比对
-#     #run_bwa(index_prefix, fq1_file, fq2_file, output_sam)
-
-
-# if __name__ == "__main__":
-#     main()

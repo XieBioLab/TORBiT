@@ -1,7 +1,8 @@
 import csv
 from collections import Counter
-from openpyxl import Workbook
 import os
+from openpyxl import load_workbook, Workbook
+from collections import defaultdict
 def analyze_tcr_usage_to_excel(csv_file, output_excel):
     # 初始化计数器
     alpha_v_gene_count = Counter()
@@ -62,19 +63,9 @@ def analyze_tcr_usage_to_excel(csv_file, output_excel):
     wb.save(output_excel)
     print(f"统计结果已保存到 {output_excel}")
 
-    import os
 
 
-if __name__ == "__main__":
-    csv_file = "/data/zhanqh/tribit/test/clone.csv"
-    output_excel = "/data/zhanqh/tribit/test/tcr_usage_analysis.xlsx"
-    analyze_tcr_usage_to_excel(csv_file, output_excel)
 
-
-##合并子样本TCRxls文件
-import os
-from openpyxl import load_workbook, Workbook
-from collections import defaultdict
 
 def merge_excel_files(main_dir, output_file):
     # 定义子目录列表
@@ -143,8 +134,3 @@ def merge_excel_files(main_dir, output_file):
     # 保存合并后的文件
     merged_wb.save(output_file)
     print(f"所有文件已按sheet合并到 {output_file}，相同基因已对齐")
-
-# if __name__ == "__main__":
-#     main_directory = "/data/zhanqh/sampleTCR/P01/"
-#     output_excel = "/data/zhanqh/sampleTCR/P01/merged_comparison.xlsx"
-#     merge_excel_files(main_directory, output_excel)

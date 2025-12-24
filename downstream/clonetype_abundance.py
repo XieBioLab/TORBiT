@@ -43,7 +43,3 @@ def calculate_tcr_clonotype_abundance(input_file, output_file):
     clonotype_abundance.to_csv(output_file, index=False)
     print(f"克隆型丰度已保存到文件: {output_file}")
 
-# 使用示例
-input_file = "/data/zhanqh/tribit/test/clone.csv"  # 输入文件路径
-output_file = "/data/zhanqh/tribit/test/tcr_clonotype_abundance.csv"  # 输出文件路径
-calculate_tcr_clonotype_abundance(input_file, output_file)
