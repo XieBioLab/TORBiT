@@ -29,12 +29,3 @@ python main.py -rf ./ref/hg_tcr.fa -r1 ./test_data/soloseq_f1.fastq -r2 ./test_d
 
 python main.py -rf ./ref/hg_tcr.fa -r1 ./test_data/soloseq_f1.fastq -sc -bc 16 -o ./results -i ./ref/ -t 8
 
-### 7. **Output File Description**
-
-results/
-├── aligned.sam            # Alignment results in SAM format
-├── forward_strand.sam     # Alignment results for forward strand
-├── reverse_strand.sam     # Alignment results for reverse strand
-├── barcode_umi.csv        # Single-cell mode: barcode and UMI information
-├── alignment.log          # Runtime log
-└── stats_report.txt       # Statistical summary report
