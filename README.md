@@ -9,7 +9,7 @@ cd TORBiT
 
 # Install dependencies
 
-pip install -r requirements.txt(未编写)
+pip install -r requirements.txt
 
 # Installation of bioinformatics tool dependencies
 
