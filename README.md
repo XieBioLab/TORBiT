@@ -1,6 +1,6 @@
 # Introduction
 
-TORBiT (TCR Reconstruction-Based Immunophenotyping Tool) is a computational workflow specifically designed for reconstructing T cell receptor sequences from single-cell transcriptome sequencing data and analyzing TCR repertoire dynamics. This workflow integrates multiple bioinformatics tools and methods, enabling the complete reconstruction of TCR α/β/γ/δ chain sequences at the single-cell level based on scRNA-seq raw sequencing data.
+TORBiT (T cell Omics Reconstruction Bioinformatics Toolkit) is a computational workflow specifically designed for reconstructing T cell receptor sequences from single-cell transcriptome sequencing data and analyzing TCR repertoire dynamics. This workflow integrates multiple bioinformatics tools and methods, enabling the complete reconstruction of TCR α/β/γ/δ chain sequences at the single-cell level based on scRNA-seq raw sequencing data.
 
 # Clone the repository
 
