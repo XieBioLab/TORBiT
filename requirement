@@ -1,0 +1,40 @@
+# Tribit Pipeline Dependencies
+# =============================
+# This file lists all dependencies required for the Tribit pipeline.
+# For installation, please use the environment.yml file with mamba/conda:
+#
+#   mamba env create -f environment.yml
+#   mamba activate tribit
+#
+# Or install Python packages separately:
+#
+#   pip install -r requirements.txt
+#
+# =============================
+
+# Python Version
+Python 3.8.1
+
+# Bioinformatics Tools (install via conda/mamba bioconda channel)
+BWA 0.7.18
+samtools 1.17
+Trinity v2.1.1
+TRUST4 v1.1.5
+
+# Python Packages (install via pip or conda)
+pandas
+psutil
+matplotlib
+openpyxl
+biopython
+
+# =============================
+# Installation Instructions:
+# =============================
+# 1. Create conda/mamba environment:
+#    mamba env create -f environment.yml
+#    mamba activate tribit
+#
+# 2. Or install manually:
+#    mamba install -c bioconda bwa=0.7.18 samtools=1.17 trinity=2.1.1 trust4=1.1.5
+#    pip install pandas psutil matplotlib openpyxl biopython
