@@ -10,29 +10,26 @@ def open_file(file_path):
 
 def parse_fq(fq1_file, barcode_len, umi_len=None, fq2_file=None):
     if fq2_file:
-        f = {}  # 正向序列字典
-        r = {}  # 反向序列字典
-        fq1_dict = {}  # 用于存储fq1中的原始ID和其对应的barcode, umi
+        f = {}  
+        r = {}  
+        fq1_dict = {}  
 
-        # 解析fq1文件 (正向序列)
         with open_file(fq1_file) as fq1:
             for line_num, line in enumerate(fq1):
                 line = line.strip()
                 if line_num % 4 == 0:  # ID行
-                    seq_id = line  # 保留完整的原始ID
-                elif line_num % 4 == 1:  # 序列行
+                    seq_id = line  
+                elif line_num % 4 == 1: 
                     seq = line
-                elif line_num % 4 == 2:  # '+'行
+                elif line_num % 4 == 2: 
                     continue
-                elif line_num % 4 == 3:  # 质量分数行
+                elif line_num % 4 == 3: 
                     qual = line
 
-                    # 提取barcode和UMI
                     barcode = seq[:barcode_len]
                     if umi_len is not None:
                         umi = seq[barcode_len:barcode_len + umi_len]
-                        # 新的ID格式: 保留原始ID结构，添加链信息(1:)和barcode:umi
-                        if ':0:' in seq_id:  # 匹配类似 2:N:0: 的结构
+                        if ':0:' in seq_id:  
                             parts = seq_id.rsplit(':0:', 1)
                             new_id = f"{parts[0]} 1:{barcode}:{umi}"
                         elif ':' in seq_id:
@@ -42,7 +39,6 @@ def parse_fq(fq1_file, barcode_len, umi_len=None, fq2_file=None):
                             new_id = f"{seq_id} 1:{barcode}:{umi}"
                     else:
                         umi = None
-                        # 新的ID格式: 保留原始ID结构，添加链信息(1:)和barcode
                         if ':0:' in seq_id:
                             parts = seq_id.rsplit(':0:', 1)
                             new_id = f"{parts[0]} 1:{barcode}"
@@ -52,31 +48,26 @@ def parse_fq(fq1_file, barcode_len, umi_len=None, fq2_file=None):
                         else:
                             new_id = f"{seq_id} 1:{barcode}"
 
-                    # 存储到fq1_dict，供fq2使用
                     fq1_dict[seq_id] = (barcode, umi)
 
-                    # 存储到正向序列字典
                     if new_id not in f:
                         f[new_id] = []
-                    # 移除barcode和umi后的序列和quality
                     remaining_seq = seq[barcode_len + (umi_len if umi_len else 0):]
                     remaining_qual = qual[barcode_len + (umi_len if umi_len else 0):]
                     f[new_id].append((remaining_seq, remaining_qual))
 
-        # 解析fq2文件 (反向序列)
         with open_file(fq2_file) as fq2:
             for line_num, line in enumerate(fq2):
                 line = line.strip()
-                if line_num % 4 == 0:  # ID行
-                    seq_id = line  # 保留完整的原始ID
-                elif line_num % 4 == 1:  # 序列行
+                if line_num % 4 == 0:  
+                    seq_id = line  
+                elif line_num % 4 == 1:  
                     seq = line
-                elif line_num % 4 == 2:  # '+'行
+                elif line_num % 4 == 2:  
                     continue
-                elif line_num % 4 == 3:  # 质量分数行
+                elif line_num % 4 == 3:  
                     qual = line
 
-                    # 从fq1_dict获取barcode和UMI
                     if seq_id in fq1_dict:
                         barcode, umi = fq1_dict[seq_id]
                         if umi is not None:
@@ -101,10 +92,8 @@ def parse_fq(fq1_file, barcode_len, umi_len=None, fq2_file=None):
                         print(f"Warning: {seq_id} not found in fq1, skipping.")
                         continue
 
-                    # 存储到反向序列字典
                     if new_id not in r:
                         r[new_id] = []
-                    # 反向序列不需要移除barcode和umi
                     r[new_id].append((seq, qual))
 
         return f, r
@@ -114,7 +103,7 @@ def parse_fq(fq1_file, barcode_len, umi_len=None, fq2_file=None):
             for line_num, line in enumerate(fq1):
                 line = line.strip()
                 if line_num % 4 == 0:
-                    seq_id = line  # 保留完整的原始ID
+                    seq_id = line  
                 elif line_num % 4 == 1:
                     seq = line
                 elif line_num % 4 == 2:
@@ -145,7 +134,6 @@ def parse_fq(fq1_file, barcode_len, umi_len=None, fq2_file=None):
 
                     if new_id not in f:
                         f[new_id] = []
-                    # 移除barcode和umi后的序列和quality
                     remaining_seq = seq[barcode_len + (umi_len if umi_len else 0):]
                     remaining_qual = qual[barcode_len + (umi_len if umi_len else 0):]
                     f[new_id].append((remaining_seq, remaining_qual))
@@ -155,15 +143,12 @@ def cluster_by_barcode_umi(f, r=None, umi_len=None):
     clustered = defaultdict(list)
     if r:
         for new_id in f:
-            # 提取barcode和UMI部分
             if umi_len is not None:
-                # 从类似 @...:barcode:umi 中提取 barcode 和 umi
                 parts = new_id.split(':')
                 barcode = parts[-2]
                 umi = parts[-1]
                 barcode_umi = f"{barcode}_{umi}"
             else:
-                # 从类似 @...:barcode 中提取 barcode
                 barcode_umi = new_id.split(':')[-1]
             clustered[barcode_umi].append((new_id, 'f', f[new_id]))
 
