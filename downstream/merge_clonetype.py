@@ -1,7 +1,6 @@
 import os
 import csv
 
-# 定义四个输入文件夹路径和输出文件路径
 input_folders = [
     './P03/P03-T-I',
     './P04/P04-T-I',
@@ -10,19 +9,18 @@ input_folders = [
 ]
 output_file = './T/fil_clone_celltype-I.tsv'
 
-# 获取所有指定文件名路径
 target_files = []
 for folder in input_folders:
-    # 构建目标文件完整路径（不区分大小写）
+    # Construct the complete file path (case-insensitive)
     target_path = os.path.join(folder, "fil_clone_celltype.tsv")
     
-    # 验证文件是否存在
+    # Verify if the file exists
     if os.path.isfile(target_path):
         target_files.append(target_path)
     else:
-        print(f"警告: 路径 {target_path} 不存在，已跳过")
+        print(f"Warning: Path {target_path} does not exist, skipping")
 
-# 合并文件
+# Merge files
 with open(output_file, 'w', newline='', encoding='utf-8') as outfile:
     writer = csv.writer(outfile)
     header_written = False
@@ -33,16 +31,16 @@ with open(output_file, 'w', newline='', encoding='utf-8') as outfile:
                 reader = csv.reader(infile)
                 header = next(reader, None)
                 
-                # 写入表头（仅首次）
+                # Write header (only once)
                 if not header_written and header:
                     writer.writerow(header)
                     header_written = True
                 
-                # 写入数据行
+                # Write data rows
                 for row in reader:
                     writer.writerow(row)
-            print(f"已合并文件: {file_path}")
+            print(f"Merged file: {file_path}")
         except Exception as e:
-            print(f"处理文件 {file_path} 时发生错误: {str(e)}")
+            print(f"Error occurred while processing file {file_path}: {str(e)}")
 
-print(f"\n合并完成！共合并 {len(target_files)} 个文件到 {output_file}")
+print(f"\nMerge completed! Successfully merged {len(target_files)} files to {output_file}")
