@@ -3,21 +3,17 @@ import subprocess
 
 def filter_bwa_sam(input_sam, output_fq1, output_fq2=None):
     if not os.path.exists(input_sam):
-        print(f"输入文件 {input_sam} 不存在，无法继续处理。")
+        print(f"The input file {input_sam} not exist, processing cannot continue.")
         return None
 
     try:
-        # 获取 samtools 的完整路径
-        samtools_path = "./samtools-1.3/samtools"  # 修改为你的 samtools 路径
+        samtools_path = "./samtools-1.3/samtools" 
 
-        if output_fq2:  # 双端模式
-            # 添加 -h 参数保留头部
+        if output_fq2:  
             command = f"{samtools_path} view -h -F 12 {input_sam} | {samtools_path} fastq - -1 {output_fq1} -2 {output_fq2}"
-        else:  # 单端模式
-            # 单端模式下，只生成一个 FASTQ 文件
+        else:  
             command = f"{samtools_path} view -h -F 4 {input_sam} | {samtools_path} fastq - > {output_fq1}"
 
-        # 执行命令
         result = subprocess.run(command, 
                                 shell=True, 
                                 check=True, 
@@ -28,9 +24,9 @@ def filter_bwa_sam(input_sam, output_fq1, output_fq2=None):
         print("command output:", result.stdout)
         print("error information:", result.stderr)
 
-        if output_fq2:  # 双端模式
+        if output_fq2:  
             return output_fq1, output_fq2
-        else:  # 单端模式
+        else:  
             return output_fq1
 
     except subprocess.CalledProcessError as e:
