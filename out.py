@@ -14,11 +14,9 @@ def process_file(input_file, output_file, error_file):
         for row in reader:
             current_record = {}
             
-            # 处理sequence_id
             original_id = row.get('sequence_id', '')
             base_id = original_id.split('_')[0]
             
-            # 生成唯一ID
             if base_id in seen_ids:
                 id_counter[base_id] += 1
                 unique_id = f"{base_id}_{id_counter[base_id]}"
@@ -28,7 +26,6 @@ def process_file(input_file, output_file, error_file):
             
             current_record['cell_id'] = unique_id
             
-            # 检查CDR3是否存在
             cdr3_nt = row.get('junction', '')
             cdr3_aa = row.get('junction_aa', '')
             if not cdr3_nt or not cdr3_aa:
@@ -43,10 +40,8 @@ def process_file(input_file, output_file, error_file):
             raw_j_gene = row.get('j_call', '')
             raw_d_gene = row.get('d_call', '') if chain_type in ['VB','VD'] else ''
             
-            # 清洗V基因名称
             cleaned_v = clean_v_gene(raw_v_gene, chain_type, raw_j_gene)
             
-            # 严格的生物逻辑校验
             validation_result, error_msg = validate_chain_strict(cleaned_v, raw_j_gene, chain_type)
             if not validation_result:
                 error_records.append(create_error_record(
@@ -54,14 +49,12 @@ def process_file(input_file, output_file, error_file):
                 ))
                 continue
 
-            # 检查等位基因格式是否有效
             if not is_valid_allele(cleaned_v) or not is_valid_allele(raw_j_gene):
                 error_records.append(create_error_record(
                     current_record, cleaned_v, raw_j_gene, chain_type, "Invalid allele format"
                 ))
                 continue
 
-            # 构建记录（使用清洗后的V基因）
             current_record.update({
                 'V': cleaned_v,
                 'D': raw_d_gene,
@@ -75,7 +68,6 @@ def process_file(input_file, output_file, error_file):
             
             output_records.append(current_record)
 
-    # 写入文件
     with open(output_file, 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, 
             fieldnames=['cell_id','locus','V','D','J','Chain_type','Productive','CDR3_nt','CDR3_aa'],
@@ -95,7 +87,6 @@ def clean_v_gene(raw_v: str, chain_type: str, j_gene: str) -> str:
     if '/' not in raw_v:
         return raw_v
     
-    # 根据J基因前缀判断
     j_prefix = j_gene.split('J')[0] if 'J' in j_gene else ''
     if j_prefix:
         parts = raw_v.split('/')
@@ -103,7 +94,6 @@ def clean_v_gene(raw_v: str, chain_type: str, j_gene: str) -> str:
             if part.startswith(j_prefix):
                 return combine_allele(part, raw_v)
     
-    # 根据链类型判断
     expected_prefix = {
         'VA': 'TRAV',
         'VB': 'TRBV',
@@ -117,12 +107,10 @@ def clean_v_gene(raw_v: str, chain_type: str, j_gene: str) -> str:
             if part.startswith(expected_prefix):
                 return combine_allele(part, raw_v)
     
-    # 默认返回第一个部分
     main_part = raw_v.split('/')[0]
     return combine_allele(main_part, raw_v)
 
 def combine_allele(main_part: str, original: str) -> str:
-    # 提取原始字符串中的等位信息
     allele_match = re.search(r'(\*[\d\-]+)$', original)
     if allele_match:
         return main_part.split('*')[0] + allele_match.group(1)
@@ -131,10 +119,8 @@ def combine_allele(main_part: str, original: str) -> str:
 def is_valid_allele(gene: str) -> bool:
     if not gene:
         return True
-    # 检查是否有非法字符
     if re.search(r'[^A-Za-z0-9*\-]', gene):
         return False
-    # 检查等位基因格式
     if '*' in gene:
         parts = gene.split('*')
         if len(parts) != 2:
@@ -151,11 +137,9 @@ def detect_chain_type(v_gene: str) -> str:
     return 'Unknown'
 
 def validate_chain_strict(v, j, chain_type) -> (bool, str):
-    # 检查基因是否为空
     if not v or not j:
         return False, "Empty gene"
     
-    # 检查链类型是否匹配
     expected = {
         'VB': ('TRBV', 'TRBJ'),
         'VA': ('TRAV', 'TRAJ'),
