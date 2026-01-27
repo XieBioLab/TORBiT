@@ -9,7 +9,7 @@ import idreb
 import trinity
 import annotation
 import out
-import time  # 导入time模块
+import time  
 
 tprint = timestamp.print_timestamp
 
@@ -124,7 +124,6 @@ Author: Your Name
 Contact: email@example.com
         """)
         sys.exit(0)
-    # 新增检查：如果指定-pe，则必须提供-r2参数
     if args.pe and not args.r2:
         parser.error("When --pe is specified, -r2 is required!")
 
@@ -140,27 +139,22 @@ Contact: email@example.com
     if args.bc:
         barcode_len = int(args.bc)
     else:
-        barcode_len = None  # 或默认值
+        barcode_len = None  
 
     if args.umi:
         umi_len = int(args.umi)
     else:
-        umi_len = None  # 或默认值
+        umi_len = None  
 
-    # 生成或使用已有索引
     success, index_prefix = Alignment.GBI(rf, index_dir)
     if success:
-                # 创建新的子文件夹（例如：'alignment_results'）
         #subdir = os.path.join(outdir, "my_out")
-        os.makedirs(outdir, exist_ok=True)  # 如果文件夹不存在则创建
+        os.makedirs(outdir, exist_ok=True)  
 
-        # 更新路径以保存 SAM 文件
         sam_output_path = os.path.join(outdir, "output.sam")
 
-        # 在新的子文件夹中保存文件
         tprint(f"Saving alignment result to {sam_output_path}")
 
-        # 调用run_bwa函数，传递具体的SAM文件路径
         sam_output_path = Alignment.run_bwa(index_prefix, 
                                             fq1, 
                                             fq2, 
@@ -168,80 +162,63 @@ Contact: email@example.com
 
     if sam_output_path:
         tprint(f"Alignment was completed, result was saved to {sam_output_path}")
-        # 检查输出路径下的以 .sam 为后缀的文件
         input_sam = [f for f in os.listdir(outdir) if f.endswith('.sam')]
         tprint("The sam_file was found, filtering and translation is beginning...")
         if input_sam:
-            input_sam_path = os.path.join(outdir, input_sam[0])  # 取第一个 .sam 文件
+            input_sam_path = os.path.join(outdir, input_sam[0])  
 
-            if args.pe and fq2:#双端
+            if args.pe and fq2:
                 if args.bc:
-                    # 创建临时文件来接收输出
                     with tempfile.NamedTemporaryFile(delete=False, suffix='_1.fastq') as temp_fq1, \
                         tempfile.NamedTemporaryFile(delete=False, suffix='_2.fastq') as temp_fq2:
 
-                        # 调用过滤函数，输出到临时文件
                         filtering.filter_bwa_sam(input_sam_path, temp_fq1.name, temp_fq2.name)
 
-                        # 读取临时文件内容
                         with open(temp_fq1.name, 'r') as f1, open(temp_fq2.name, 'r') as f2:
-                            tfq1 = f1.readlines()  # 使用 readlines() 按行读取
+                            tfq1 = f1.readlines()  
                             tfq2 = f2.readlines()
                         tprint("Filtering was complete! ID rebuilding and clustering...")
                         if args.umi:
-                            # 重建序列id
                             f, r = idreb.parse_fq(temp_fq1.name, barcode_len, umi_len, temp_fq2.name)
 
-                            # 对具有相同形态的序列进行聚类
                             clustered = idreb.cluster_by_barcode_umi(f, r, umi_len)
                             tprint("Clustering done! Fastqs are written...")
                         else:
                             f, r = idreb.parse_fq(temp_fq1.name, barcode_len, umi_len, temp_fq2.name)
 
-                            # 对具有相同形态的序列进行聚类
                             clustered = idreb.cluster_by_barcode_umi(f, r, umi_len)
-                            tprint("Clustering done! Fastqs are written...")
-                        # 写出新的双端文件                
+                            tprint("Clustering done! Fastqs are written...")               
                         output_fq1_path = os.path.join(outdir, "clustered1.fastq")
                         output_fq2_path = os.path.join(outdir, "clustered2.fastq")
                         idreb.write_clustered_fq(clustered, output_fq1_path, output_fq2_path)
                         tprint("Fastq files were created successfully! Assembly will be initiated...")
 
-                        # 调用组装模块
                         if os.path.exists(output_fq1_path) and os.path.exists(output_fq2_path):
                             trinity.parallel_batch(output_fq1_path, threads, outdir, output_fq2_path, has_barcode_umi= has_barcode_umi)
-                            # 删除SAM文件
                             os.remove(input_sam_path)
                             tprint(f"Removed SAM file: {input_sam_path}")
                         else:
                             tprint("Error: clustered1.fastq or clustered2.fastq not found in output directory.")
                 else:
-                    # 双端 bulk RNA-seq 数据，跳过聚类步骤
-                    # 定义输出文件路径
                     output_fq1_path = os.path.join(outdir, "clustered1.fastq")
                     output_fq2_path = os.path.join(outdir, "clustered2.fastq")
                     
-                    # 调用过滤函数，直接写入输出文件
                     filtering.filter_bwa_sam(input_sam_path, output_fq1_path, output_fq2_path)
                     
-                    # 调用组装模块
                     if os.path.exists(output_fq1_path) and os.path.exists(output_fq2_path):
                         tprint("Paired-end bulk RNA-seq data detected, skipping clustering and directly calling assembly...")
                         trinity.parallel_batch(output_fq1_path, threads, outdir, output_fq2_path, has_barcode_umi= has_barcode_umi)
-                        # 删除SAM文件
                         os.remove(input_sam_path)
                         tprint(f"Removed SAM file: {input_sam_path}")
                     else:
                         tprint("Error: clustered1.fastq or clustered2.fastq not found in output directory.")
 
-            else:#单端
+            else:
                 if args.bc: 
-                    if args.umi:#单细胞
+                    if args.umi:
                         with tempfile.NamedTemporaryFile(delete=False, suffix='_s.fastq') as temp_fq1:
-                                                    # 调用过滤函数，输出到临时文件
+
                             filtering.filter_bwa_sam(input_sam_path, temp_fq1.name)
-                            # 对具有相同形态的序列进行聚类
-                                        # 解析 FASTQ 文件并获取 f
                             f = idreb.parse_fq(temp_fq1.name, barcode_len, umi_len)
                             clustered = idreb.cluster_by_barcode_umi(f)
                             tprint("Clustering done! Fastqs are written...")
@@ -249,19 +226,14 @@ Contact: email@example.com
                             idreb.write_clustered_fq(clustered, output_fq1_path)
                             tprint("Fastq files were created successfully! Assembly will be initiated...")
 
-                            # 调用组装模块
                             if os.path.exists(output_fq1_path):
                                 tprint(f"Using clustered fastq files: {output_fq1_path}")
                                 trinity.parallel_batch(output_fq1_path, threads, outdir, r2_file=None, has_barcode_umi=has_barcode_umi)
-                                # 删除SAM文件
                                 os.remove(input_sam_path)
                                 tprint(f"Removed SAM file: {input_sam_path}")
                     else:
                         with tempfile.NamedTemporaryFile(delete=False, suffix='_s.fastq') as temp_fq1:
-                                                    # 调用过滤函数，输出到临时文件
                             filtering.filter_bwa_sam(input_sam_path, temp_fq1.name)
-                            # 对具有相同形态的序列进行聚类
-                                        # 解析 FASTQ 文件并获取 f
                             f = idreb.parse_fq(temp_fq1.name, barcode_len, umi_len)
                             clustered = idreb.cluster_by_barcode_umi(f)
                             tprint("Clustering done! Fastqs are written...")
@@ -269,30 +241,21 @@ Contact: email@example.com
                             idreb.write_clustered_fq(clustered, output_fq1_path)
                             tprint("Fastq files were created successfully! Assembly will be initiated...")
 
-                            # 调用组装模块
                             if os.path.exists(output_fq1_path):
                                 tprint(f"Using clustered fastq files: {output_fq1_path}")
                                 trinity.parallel_batch(output_fq1_path, threads, outdir, r2_file=None, has_barcode_umi=has_barcode_umi)
-                                # 删除SAM文件
                                 os.remove(input_sam_path)
                                 tprint(f"Removed SAM file: {input_sam_path}")
                 else:
-                    # 单端 bulk RNA-seq 数据，跳过聚类步骤
-                    # 定义输出文件路径
                     output_fq1_path = os.path.join(outdir, "clustered1.fastq")
                     
-                    # 调用过滤函数，直接写入输出文件
                     filtering.filter_bwa_sam(input_sam_path, output_fq1_path)
                     
-                    # 调用组装模块
                     if os.path.exists(output_fq1_path):
-                        # 单端bulkRNAseq数据直接调用组装
                         tprint("Single-end data detected, skipping clustering and directly calling assembly...")
                         trinity.parallel_batch(output_fq1_path, threads, outdir, r2_file=None, has_barcode_umi= False)
-                        # 删除SAM文件
                         os.remove(input_sam_path)
                         tprint(f"Removed SAM file: {input_sam_path}")
-            # 检查输出路径下是否存在 .fa 文件
             fa_file = [i for i in os.listdir(outdir) if i.endswith('.fa')]
             if fa_file:
                 tprint(f"Found {len(fa_file)} .fa.")
@@ -310,7 +273,6 @@ Contact: email@example.com
     else:
         tprint("Alignment failed.")
 
-    # 记录程序结束时间并计算总耗时
     end_time = time.time()
     total_time = end_time - start_time
     tprint(f"Total execution time: {total_time:.2f} seconds.")
